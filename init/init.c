@@ -320,6 +320,9 @@ void service_start(struct service *svc, const char *dynamic_args)
             }
 
             rc = security_compute_create(mycon, fcon, string_to_security_class("process"), &scon);
+            if (rc == 0 && !strcmp(scon, mycon)) {
+                ERROR("Warning!  Service %s needs a SELinux domain defined; please fix!\n", svc->name);
+            }
             freecon(mycon);
             freecon(fcon);
             if (rc < 0) {
@@ -825,10 +828,6 @@ static void import_kernel_nv(char *name, int for_emulator)
         cnt = snprintf(prop, sizeof(prop), "ro.boot.%s", boot_prop_name);
         if (cnt < PROP_NAME_MAX)
             property_set(prop, value);
-#ifdef HAS_SEMC_BOOTLOADER
-    } else if (!strcmp(name,"serialno")) {
-        property_set("ro.boot.serialno", value);
-#endif
     }
 }
 

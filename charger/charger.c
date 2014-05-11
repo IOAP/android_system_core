@@ -71,7 +71,9 @@
 
 #define BATTERY_FULL_THRESH     95
 
+#ifndef BACKLIGHT_TOGGLE_PATH
 #define BACKLIGHT_TOGGLE_PATH "/sys/class/leds/lcd-backlight/brightness"
+#endif
 
 #define LAST_KMSG_PATH          "/proc/last_kmsg"
 #define LAST_KMSG_MAX_SZ        (32 * 1024)
@@ -702,9 +704,9 @@ static int draw_text(const char *str, int x, int y)
     return y + char_height;
 }
 
-static void android_green(void)
+static void android_blue(void)
 {
-    gr_color(0xa4, 0xc6, 0x39, 255);
+    gr_color(0, 191, 255, 255);
 }
 
 static void draw_capacity(struct charger *charger)
@@ -717,7 +719,7 @@ static void draw_capacity(struct charger *charger)
     str_len_px = gr_measure(cap_str);
     x = (gr_fb_width() - str_len_px) / 2;
     y = (gr_fb_height() + char_height) / 2;
-    android_green();
+    android_blue();
     gr_text(x, y, cap_str, 0);
 }
 
@@ -745,7 +747,7 @@ static void draw_unknown(struct charger *charger)
     if (charger->surf_unknown) {
         draw_surface_centered(charger, charger->surf_unknown);
     } else {
-        android_green();
+        android_blue();
         y = draw_text("Charging!", -1, -1);
         draw_text("?\?/100", -1, y + 25);
     }
